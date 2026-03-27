@@ -47,7 +47,7 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
 }
 
-// Optional .env (vlucas/phpdotenv) — same vars as server environment
+// Optional .env (vlucas/phpdotenv). Config files read $_ENV first (see config/google_merchant.php).
 if (is_file(__DIR__ . '/../.env') && class_exists(\Dotenv\Dotenv::class)) {
     \Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
 }

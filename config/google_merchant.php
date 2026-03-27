@@ -14,28 +14,45 @@
  * GOOGLE_MERCHANT_CREDENTIALS_PATH, GOOGLE_MERCHANT_CONTENT_LANGUAGE,
  * GOOGLE_MERCHANT_TARGET_COUNTRY, GOOGLE_MERCHANT_CURRENCY, GOOGLE_MERCHANT_DEFAULT_BRAND,
  * GOOGLE_MERCHANT_FEED_ENABLED, GOOGLE_MERCHANT_FEED_TOKEN
+ *
+ * Reads $_ENV / $_SERVER first (vlucas/phpdotenv createImmutable), then getenv().
  */
-return [
-    'enabled' => filter_var(
-        getenv('GOOGLE_MERCHANT_ENABLED') !== false && getenv('GOOGLE_MERCHANT_ENABLED') !== ''
-            ? getenv('GOOGLE_MERCHANT_ENABLED')
-            : 'false',
-        FILTER_VALIDATE_BOOLEAN
-    ),
-    'merchant_id' => getenv('GOOGLE_MERCHANT_MERCHANT_ID') ?: '',
-    'credentials_path' => getenv('GOOGLE_MERCHANT_CREDENTIALS_PATH')
-        ?: (__DIR__ . '/../storage/private/google-merchant-credentials.json'),
-    'content_language' => getenv('GOOGLE_MERCHANT_CONTENT_LANGUAGE') ?: 'en',
-    'target_country' => getenv('GOOGLE_MERCHANT_TARGET_COUNTRY') ?: 'KH',
-    'currency' => getenv('GOOGLE_MERCHANT_CURRENCY') ?: 'USD',
-    'default_brand' => getenv('GOOGLE_MERCHANT_DEFAULT_BRAND') ?: 'S3V Group',
-    'channel' => 'online',
-    'feed_enabled' => filter_var(
-        getenv('GOOGLE_MERCHANT_FEED_ENABLED') !== false && getenv('GOOGLE_MERCHANT_FEED_ENABLED') !== ''
-            ? getenv('GOOGLE_MERCHANT_FEED_ENABLED')
-            : 'false',
-        FILTER_VALIDATE_BOOLEAN
-    ),
-    'feed_token' => getenv('GOOGLE_MERCHANT_FEED_TOKEN') ?: '',
-];
+$env = static function (string $key, string $default = ''): string {
+    if (array_key_exists($key, $_ENV)) {
+        return (string) $_ENV[$key];
+    }
+    if (array_key_exists($key, $_SERVER)) {
+        return (string) $_SERVER[$key];
+    }
+    $v = getenv($key);
 
+    return $v !== false ? (string) $v : $default;
+};
+
+$projectRoot = dirname(__DIR__);
+$envCred = $env('GOOGLE_MERCHANT_CREDENTIALS_PATH', '');
+if ($envCred === '') {
+    $credentialsPath = $projectRoot . '/storage/private/google-merchant-credentials.json';
+} else {
+    $credentialsPath = str_replace('\\', '/', $envCred);
+    $isAbsolute = strpos($credentialsPath, '/') === 0
+        || preg_match('/^[A-Za-z]:\//', $credentialsPath) === 1;
+    if (!$isAbsolute) {
+        $credentialsPath = $projectRoot . '/' . ltrim($credentialsPath, '/');
+    }
+}
+
+$enabledRaw = $env('GOOGLE_MERCHANT_ENABLED', 'false');
+
+return [
+    'enabled' => filter_var($enabledRaw, FILTER_VALIDATE_BOOLEAN),
+    'merchant_id' => $env('GOOGLE_MERCHANT_MERCHANT_ID', ''),
+    'credentials_path' => $credentialsPath,
+    'content_language' => $env('GOOGLE_MERCHANT_CONTENT_LANGUAGE', 'en'),
+    'target_country' => $env('GOOGLE_MERCHANT_TARGET_COUNTRY', 'KH'),
+    'currency' => $env('GOOGLE_MERCHANT_CURRENCY', 'USD'),
+    'default_brand' => $env('GOOGLE_MERCHANT_DEFAULT_BRAND', 'S3V Group'),
+    'channel' => 'online',
+    'feed_enabled' => filter_var($env('GOOGLE_MERCHANT_FEED_ENABLED', 'false'), FILTER_VALIDATE_BOOLEAN),
+    'feed_token' => $env('GOOGLE_MERCHANT_FEED_TOKEN', ''),
+];

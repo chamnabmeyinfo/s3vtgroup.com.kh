@@ -3,6 +3,7 @@
 
 # Local secrets — copy from database.php.example
 /config/database.php
+/.env
 
 # Runtime / generated
 /storage/uploads/*
