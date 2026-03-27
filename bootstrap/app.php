@@ -42,6 +42,16 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 // Load helper functions
 require_once __DIR__ . '/../app/Support/functions.php';
 
+// Composer (Google Auth, etc.)
+if (is_file(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
+// Optional .env (vlucas/phpdotenv) — same vars as server environment
+if (is_file(__DIR__ . '/../.env') && class_exists(\Dotenv\Dotenv::class)) {
+    \Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
+}
+
 // Autoloader (must be registered first so classes can be autoloaded)
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';

@@ -53,6 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 foreach ($productIds as $productId) {
                     try {
+                        if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                            $vids = [];
+                            try {
+                                $rows = db()->fetchAll('SELECT id FROM product_variants WHERE product_id = :id', ['id' => $productId]);
+                                $vids = array_map('intval', array_column($rows, 'id'));
+                            } catch (\Throwable $e) {
+                            }
+                            try {
+                                (new \App\Services\GoogleMerchantProductSync())->deleteAllForProductBeforeDbDelete($productId, $vids);
+                            } catch (\Throwable $e) {
+                                error_log('Google Merchant bulk delete: ' . $e->getMessage());
+                            }
+                        }
                         $productModel->delete($productId);
                         $deletedCount++;
                     } catch (\Exception $e) {
@@ -74,12 +87,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
             case 'activate':
                 db()->query("UPDATE products SET is_active = 1 WHERE id IN ($placeholders)", $productIds);
+                if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                    $sync = new \App\Services\GoogleMerchantProductSync();
+                    foreach ($productIds as $pid) {
+                        try {
+                            $sync->syncProduct((int) $pid);
+                        } catch (\Throwable $e) {
+                            error_log('Google Merchant bulk activate: ' . $e->getMessage());
+                        }
+                    }
+                }
                 $response['success'] = true;
                 $response['message'] = count($productIds) . ' product(s) activated successfully.';
                 break;
                 
             case 'deactivate':
                 db()->query("UPDATE products SET is_active = 0 WHERE id IN ($placeholders)", $productIds);
+                if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                    $sync = new \App\Services\GoogleMerchantProductSync();
+                    foreach ($productIds as $pid) {
+                        try {
+                            $sync->syncProduct((int) $pid);
+                        } catch (\Throwable $e) {
+                            error_log('Google Merchant bulk deactivate: ' . $e->getMessage());
+                        }
+                    }
+                }
                 $response['success'] = true;
                 $response['message'] = count($productIds) . ' product(s) deactivated successfully.';
                 break;

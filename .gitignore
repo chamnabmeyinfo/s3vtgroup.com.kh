@@ -28,3 +28,10 @@
 Thumbs.db
 *.swp
 *~
+
+/storage/private/*
+!/storage/private/.gitkeep
+
+
+composer.phar
+

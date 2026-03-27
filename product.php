@@ -113,6 +113,35 @@ $jsonLd = [
 if (!empty($ogImage)) {
     $jsonLd['image'] = $ogImage;
 }
+$gmCfg = config('google_merchant', []) ?: [];
+$defaultBrand = trim((string) ($gmCfg['default_brand'] ?? ''));
+if ($defaultBrand !== '') {
+    $jsonLd['brand'] = [
+        '@type' => 'Brand',
+        'name' => $defaultBrand,
+    ];
+}
+$offerPrice = $product['sale_price'] !== null && $product['sale_price'] !== ''
+    ? (float) $product['sale_price']
+    : (float) ($product['price'] ?? 0);
+if ($offerPrice > 0) {
+    $currency = (string) ($gmCfg['currency'] ?? 'USD');
+    $stock = (string) ($product['stock_status'] ?? 'in_stock');
+    $availabilityUrl = 'https://schema.org/InStock';
+    if ($stock === 'out_of_stock') {
+        $availabilityUrl = 'https://schema.org/OutOfStock';
+    } elseif ($stock === 'on_order') {
+        $availabilityUrl = 'https://schema.org/BackOrder';
+    }
+    $jsonLd['offers'] = [
+        '@type' => 'Offer',
+        'url' => $canonicalUrl,
+        'priceCurrency' => $currency,
+        'price' => number_format($offerPrice, 2, '.', ''),
+        'availability' => $availabilityUrl,
+        'itemCondition' => 'https://schema.org/NewCondition',
+    ];
+}
 
 include __DIR__ . '/includes/header.php';
 ?>

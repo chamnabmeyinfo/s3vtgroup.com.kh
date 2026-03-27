@@ -38,6 +38,20 @@ if (!empty($_GET['delete'])) {
             if (!$product) {
                 $error = 'Product not found.';
             } else {
+                // Remove from Google Merchant before DB delete
+                if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                    $vids = [];
+                    try {
+                        $rows = db()->fetchAll('SELECT id FROM product_variants WHERE product_id = :id', ['id' => $productId]);
+                        $vids = array_map('intval', array_column($rows, 'id'));
+                    } catch (\Throwable $e) {
+                    }
+                    try {
+                        (new \App\Services\GoogleMerchantProductSync())->deleteAllForProductBeforeDbDelete($productId, $vids);
+                    } catch (\Throwable $e) {
+                        error_log('Google Merchant delete: ' . $e->getMessage());
+                    }
+                }
                 // Perform delete
                 $productModel->delete($productId);
                 $message = 'Product deleted successfully.';

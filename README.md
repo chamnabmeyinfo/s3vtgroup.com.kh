@@ -84,8 +84,8 @@ A comprehensive, modern e-commerce platform for selling forklifts and factory eq
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/chamnabmeyinfo/s3vgroup-version2.git
-   cd s3vgroup-version2
+   git clone https://github.com/chamnabmeyinfo/s3vtgroup.com.kh.git
+   cd s3vtgroup.com.kh
    ```
 
 2. **Configure Database:**

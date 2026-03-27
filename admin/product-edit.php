@@ -22,6 +22,7 @@ if ($productId) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $googleMerchantRemovedVariantIds = [];
     $name = trim($_POST['name'] ?? '');
     
     // Generate slug from name if empty
@@ -245,6 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($existingVariants) && !empty($processedVariantIds)) {
                     $variantsToDelete = array_diff($existingVariants, $processedVariantIds);
                     if (!empty($variantsToDelete)) {
+                        $googleMerchantRemovedVariantIds = array_values(array_unique(array_merge($googleMerchantRemovedVariantIds, $variantsToDelete)));
                         try {
                             // Delete variant gallery images first
                             foreach ($variantsToDelete as $variantIdToDelete) {
@@ -264,6 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 } elseif (!empty($existingVariants) && empty($variants)) {
                     // All variants were removed
+                    $googleMerchantRemovedVariantIds = array_values(array_unique(array_merge($googleMerchantRemovedVariantIds, $existingVariants)));
                     try {
                         $db->delete('product_variant_images', 'variant_id IN (SELECT id FROM product_variants WHERE product_id = :product_id)', ['product_id' => $productId]);
                         $db->delete('product_variant_attributes', 'variant_id IN (SELECT id FROM product_variants WHERE product_id = :product_id)', ['product_id' => $productId]);
@@ -275,6 +278,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             $db->getPdo()->commit();
+
+            if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                try {
+                    $merchantSync = new \App\Services\GoogleMerchantProductSync();
+                    $merchantSync->deleteOffersForRemovedVariants($googleMerchantRemovedVariantIds);
+                    $merchantSync->syncProduct((int) $productId);
+                } catch (\Throwable $e) {
+                    error_log('Google Merchant sync: ' . $e->getMessage());
+                }
+            }
             
             // Redirect to edit page after creating a new product
             if (isset($isNewProduct) && $isNewProduct && $productId) {
@@ -298,6 +311,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $db->getPdo()->beginTransaction();
                         $productModel->update($productId, $data);
                         $db->getPdo()->commit();
+                        if (\App\Services\GoogleMerchantProductSync::isEnabled()) {
+                            try {
+                                $merchantSync = new \App\Services\GoogleMerchantProductSync();
+                                $merchantSync->deleteOffersForRemovedVariants($googleMerchantRemovedVariantIds);
+                                $merchantSync->syncProduct((int) $productId);
+                            } catch (\Throwable $e) {
+                                error_log('Google Merchant sync: ' . $e->getMessage());
+                            }
+                        }
                         $message = 'Product updated successfully. (SKU was not changed due to duplicate constraint)';
                         $error = '';
                         $product = $productModel->getById($productId);
