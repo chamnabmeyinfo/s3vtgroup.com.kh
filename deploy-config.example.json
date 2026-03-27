@@ -1,0 +1,47 @@
+{
+  "ftp": {
+    "enabled": true,
+    "host": "ftp.s3vgroup.com",
+    "username": "your_ftp_username",
+    "password": "your_ftp_password",
+    "port": 21,
+    "remote_path": "/public_html"
+  },
+  "git": {
+    "enabled": true,
+    "branch": "main",
+    "auto_commit": true,
+    "commit_message": "Auto deploy: {timestamp}",
+    "token": "your_github_personal_access_token_here"
+  },
+  "upload": {
+    "images": true,
+    "configs": true,
+    "others": false,
+    "create_backup": true,
+    "dry_run": false
+  },
+  "validation": {
+    "enabled": true,
+    "check_syntax": true,
+    "check_config": true,
+    "check_database": true,
+    "stop_on_errors": true
+  },
+  "smart": {
+    "change_detection": true,
+    "incremental_sync": true,
+    "conflict_detection": true,
+    "auto_backup": true
+  },
+  "exclude": [
+    "*.log",
+    "*.cache",
+    ".git",
+    "node_modules",
+    "vendor",
+    "*.tmp",
+    "*.temp"
+  ]
+}
+

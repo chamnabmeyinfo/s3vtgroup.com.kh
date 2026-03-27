@@ -1,0 +1,30 @@
+# Dependencies
+/vendor/
+
+# Local secrets — copy from database.php.example
+/config/database.php
+
+# Runtime / generated
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/backups/*
+!/storage/backups/.gitkeep
+/storage/catalogs/*
+!/storage/catalogs/.gitkeep
+/storage/qrcodes/*
+!/storage/qrcodes/.gitkeep
+/storage/design-backups/
+/storage/uploads-backup/
+# Web-accessible copy of uploads (large binaries; same as uploads/)
+/storage/public_html/storage/*
+!/storage/public_html/storage/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~

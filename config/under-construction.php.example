@@ -1,0 +1,17 @@
+<?php
+/**
+ * Website Under Maintenance Configuration
+ * 
+ * Copy this file to under-construction.php and update settings
+ * Set 'enabled' to true to enable maintenance mode
+ * When enabled, only logged-in admin users can access the frontend
+ * Admin panel will still be accessible even when enabled
+ */
+return [
+    'enabled' => false, // Set to true to enable maintenance mode
+    'message' => 'Website is under maintenance',
+    'progress' => 85,
+    'contact_email' => 'info@s3vgroup.com',
+    'contact_phone' => '+1 (234) 567-890'
+];
+

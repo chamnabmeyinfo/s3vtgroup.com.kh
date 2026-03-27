@@ -1,0 +1,21 @@
+<?php
+/**
+ * Live Server Database Configuration
+ * 
+ * Copy this file to database.live.php and update with your cPanel database credentials
+ * 
+ * cPanel Database Name Format: username_dbname
+ * cPanel Database User Format: username_dbuser
+ */
+return [
+    'host' => 'localhost',  // Usually 'localhost' on cPanel
+    'dbname' => 'your_cpanel_database_name',  // e.g., 'username_forklift'
+    'username' => 'your_cpanel_database_user',  // e.g., 'username_dbuser'
+    'password' => 'your_cpanel_database_password',  // Your database password
+    'charset' => 'utf8mb4',
+    'options' => [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]
+];

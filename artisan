@@ -1,0 +1,620 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Custom CLI Tool (Artisan-like)
+ * Run commands from terminal: php artisan [command]
+ */
+
+// Only allow CLI execution
+if (php_sapi_name() !== 'cli') {
+    die("This script can only be run from command line.\n");
+}
+
+// Bootstrap the application
+require_once __DIR__ . '/bootstrap/app.php';
+
+// Get command and arguments
+$command = $argv[1] ?? null;
+$args = array_slice($argv, 2);
+
+// Show help if no command
+if (empty($command) || $command === 'help' || $command === '--help' || $command === '-h') {
+    showHelp();
+    exit(0);
+}
+
+// Route commands
+switch ($command) {
+    case 'list':
+        listCommands();
+        break;
+    
+    case 'db:query':
+        runDatabaseQuery($args);
+        break;
+    
+    case 'cache:clear':
+        clearCache();
+        break;
+    
+    case 'db:optimize':
+        optimizeDatabase();
+        break;
+    
+    case 'db:backup':
+        backupDatabase();
+        break;
+    
+    case 'logs:clean':
+        cleanOldLogs($args);
+        break;
+    
+    case 'make:migration':
+        makeMigration($args);
+        break;
+    
+    case 'migrate':
+        runMigrations();
+        break;
+    
+    case 'db:seed':
+        seedDatabase($args);
+        break;
+    
+    case 'serve':
+        startServer($args);
+        break;
+    
+    case 'env:local':
+        switchEnvironment('local');
+        break;
+    
+    case 'env:live':
+        switchEnvironment('live');
+        break;
+    
+    case 'env:show':
+        showCurrentEnvironment();
+        break;
+    
+    case 'pull':
+        pullFromRemote($args);
+        break;
+    
+    case 'pull:dry-run':
+        pullFromRemote(array_merge($args, ['--dry-run' => true]));
+        break;
+    
+    default:
+        echo "❌ Unknown command: {$command}\n\n";
+        echo "Run 'php artisan list' to see all available commands.\n";
+        echo "Run 'php artisan help' for more information.\n";
+        exit(1);
+}
+
+/**
+ * Show help information
+ */
+function showHelp() {
+    echo "\n";
+    echo "╔══════════════════════════════════════════════════════════════╗\n";
+    echo "║           Custom CLI Tool - Command Reference                ║\n";
+    echo "╚══════════════════════════════════════════════════════════════╝\n\n";
+    
+    echo "Usage:\n";
+    echo "  php artisan [command] [options]\n\n";
+    
+    echo "Available Commands:\n\n";
+    
+    $commands = [
+        'Database' => [
+            'db:query "SQL"     Run a SQL query on the database',
+            'db:optimize        Optimize all database tables',
+            'db:backup          Create a database backup',
+            'migrate            Run database migrations',
+            'db:seed            Seed the database',
+        ],
+        'Cache' => [
+            'cache:clear        Clear all cache files',
+        ],
+        'Maintenance' => [
+            'logs:clean [days]  Clean log files older than X days (default: 30)',
+        ],
+        'Development' => [
+            'make:migration     Create a new migration file',
+            'serve [port]       Start development server (default: 8000)',
+        ],
+        'Environment' => [
+            'env:local          Switch to local database',
+            'env:live           Switch to live server database',
+            'env:show           Show current database environment',
+        ],
+        'File Sync' => [
+            'pull               Pull all files from cPanel to local',
+            'pull:dry-run       Preview what would be pulled (no changes)',
+        ],
+        'Information' => [
+            'list               List all available commands',
+            'help               Show this help message',
+        ],
+    ];
+    
+    foreach ($commands as $category => $cmds) {
+        echo "  {$category}:\n";
+        foreach ($cmds as $cmd) {
+            echo "    {$cmd}\n";
+        }
+        echo "\n";
+    }
+    
+    echo "Examples:\n";
+    echo "  php artisan db:query \"SELECT * FROM products LIMIT 5;\"\n";
+    echo "  php artisan cache:clear\n";
+    echo "  php artisan db:backup\n";
+    echo "  php artisan pull              # Pull all files from cPanel\n";
+    echo "  php artisan serve 8080\n\n";
+}
+
+/**
+ * List all available commands
+ */
+function listCommands() {
+    echo "\nAvailable Commands:\n\n";
+    
+    $commands = [
+        'db:query' => 'Run a SQL query on the database',
+        'db:optimize' => 'Optimize all database tables',
+        'db:backup' => 'Create a database backup',
+        'cache:clear' => 'Clear all cache files',
+        'logs:clean' => 'Clean old log files',
+        'migrate' => 'Run database migrations',
+        'db:seed' => 'Seed the database',
+        'make:migration' => 'Create a new migration file',
+        'serve' => 'Start development server',
+        'env:local' => 'Switch to local database',
+        'env:live' => 'Switch to live server database',
+        'env:show' => 'Show current database environment',
+        'pull' => 'Pull all files from cPanel to local',
+        'pull:dry-run' => 'Preview what would be pulled',
+        'list' => 'List all available commands',
+        'help' => 'Show help message',
+    ];
+    
+    foreach ($commands as $cmd => $desc) {
+        printf("  %-20s %s\n", $cmd, $desc);
+    }
+    echo "\n";
+}
+
+/**
+ * Run database query
+ */
+function runDatabaseQuery($args) {
+    if (empty($args)) {
+        echo "❌ Error: Please provide a SQL query.\n";
+        echo "Usage: php artisan db:query \"SELECT * FROM products;\"\n";
+        exit(1);
+    }
+    
+    $sql = implode(' ', $args);
+    
+    try {
+        $db = db();
+        $startTime = microtime(true);
+        
+        $isSelect = stripos(trim($sql), 'SELECT') === 0;
+        
+        if ($isSelect) {
+            $result = $db->fetchAll($sql);
+            
+            if (empty($result)) {
+                echo "✓ Query executed successfully. No results returned.\n";
+            } else {
+                // Display results
+                $columns = array_keys($result[0]);
+                
+                echo "\n" . str_repeat("=", 100) . "\n";
+                echo implode(" | ", $columns) . "\n";
+                echo str_repeat("=", 100) . "\n";
+                
+                foreach ($result as $row) {
+                    $values = array_map(function($val) {
+                        return is_null($val) ? 'NULL' : (strlen($val) > 30 ? substr($val, 0, 27) . '...' : $val);
+                    }, array_values($row));
+                    echo implode(" | ", $values) . "\n";
+                }
+                
+                echo str_repeat("=", 100) . "\n";
+                echo "Total rows: " . count($result) . "\n";
+            }
+        } else {
+            $stmt = $db->query($sql);
+            $affectedRows = $stmt->rowCount();
+            echo "✓ Query executed successfully.\n";
+            echo "Affected rows: {$affectedRows}\n";
+        }
+        
+        $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+        echo "Execution time: {$executionTime}ms\n";
+        
+    } catch (Exception $e) {
+        echo "❌ Error: " . $e->getMessage() . "\n";
+        exit(1);
+    }
+}
+
+/**
+ * Clear cache
+ */
+function clearCache() {
+    echo "Clearing cache...\n";
+    
+    $output = [];
+    
+    // Clear opcache if available
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+        $output[] = "✓ Opcache cleared";
+    }
+    
+    // Clear cache directories
+    $cacheDirs = [
+        __DIR__ . '/storage/cache',
+        __DIR__ . '/storage/temp',
+    ];
+    
+    $totalCleared = 0;
+    foreach ($cacheDirs as $dir) {
+        if (is_dir($dir)) {
+            $files = glob($dir . '/*');
+            $count = 0;
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                    $count++;
+                }
+            }
+            $output[] = "✓ Cleared {$count} files from " . basename($dir);
+            $totalCleared += $count;
+        }
+    }
+    
+    foreach ($output as $line) {
+        echo "  {$line}\n";
+    }
+    
+    echo "\n✓ Cache cleared! ({$totalCleared} files removed)\n";
+}
+
+/**
+ * Optimize database
+ */
+function optimizeDatabase() {
+    echo "Optimizing database...\n\n";
+    
+    try {
+        $db = db();
+        $tables = $db->fetchAll("SHOW TABLES");
+        $firstTable = reset($tables);
+        $tableColumn = array_key_first($firstTable);
+        
+        $optimized = 0;
+        foreach ($tables as $table) {
+            $tableName = $table[$tableColumn];
+            try {
+                $db->getPdo()->exec("OPTIMIZE TABLE `{$tableName}`");
+                echo "  ✓ Optimized: {$tableName}\n";
+                $optimized++;
+            } catch (Exception $e) {
+                echo "  ✗ Error optimizing {$tableName}: " . $e->getMessage() . "\n";
+            }
+        }
+        
+        echo "\n✓ Database optimization completed! ({$optimized} tables optimized)\n";
+    } catch (Exception $e) {
+        echo "❌ Error: " . $e->getMessage() . "\n";
+        exit(1);
+    }
+}
+
+/**
+ * Backup database
+ */
+function backupDatabase() {
+    echo "Creating database backup...\n";
+    
+    try {
+        $backupService = new \App\Core\Backup\BackupService();
+        $backupFile = $backupService->backupDatabase();
+        
+        if ($backupFile && file_exists($backupFile)) {
+            $size = filesize($backupFile);
+            $sizeFormatted = $size > 1024 * 1024 
+                ? round($size / (1024 * 1024), 2) . ' MB'
+                : round($size / 1024, 2) . ' KB';
+            
+            echo "✓ Backup created successfully!\n";
+            echo "  File: " . basename($backupFile) . "\n";
+            echo "  Size: {$sizeFormatted}\n";
+            echo "  Location: " . dirname($backupFile) . "\n";
+        } else {
+            echo "❌ Backup failed: File not created\n";
+            exit(1);
+        }
+    } catch (Exception $e) {
+        echo "❌ Error: " . $e->getMessage() . "\n";
+        exit(1);
+    }
+}
+
+/**
+ * Clean old logs
+ */
+function cleanOldLogs($args) {
+    $days = isset($args[0]) ? (int)$args[0] : 30;
+    
+    echo "Cleaning log files older than {$days} days...\n\n";
+    
+    $logDir = __DIR__ . '/storage/logs';
+    $cutoffTime = time() - ($days * 24 * 60 * 60);
+    $deleted = 0;
+    
+    if (is_dir($logDir)) {
+        $files = glob($logDir . '/*.log');
+        foreach ($files as $file) {
+            if (filemtime($file) < $cutoffTime) {
+                unlink($file);
+                echo "  ✓ Deleted: " . basename($file) . "\n";
+                $deleted++;
+            }
+        }
+    }
+    
+    echo "\n✓ Cleanup completed! ({$deleted} files deleted)\n";
+}
+
+/**
+ * Make migration
+ */
+function makeMigration($args) {
+    if (empty($args)) {
+        echo "❌ Error: Please provide a migration name.\n";
+        echo "Usage: php artisan make:migration create_users_table\n";
+        exit(1);
+    }
+    
+    $name = $args[0];
+    $timestamp = date('Y_m_d_His');
+    $className = str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
+    $fileName = "{$timestamp}_{$name}.sql";
+    $filePath = __DIR__ . "/database/migrations/{$fileName}";
+    
+    // Create migrations directory if it doesn't exist
+    $migrationsDir = __DIR__ . '/database/migrations';
+    if (!is_dir($migrationsDir)) {
+        mkdir($migrationsDir, 0755, true);
+    }
+    
+    $content = "-- Migration: {$name}\n";
+    $content .= "-- Created: " . date('Y-m-d H:i:s') . "\n\n";
+    $content .= "-- Add your SQL here\n";
+    $content .= "-- Example:\n";
+    $content .= "-- CREATE TABLE IF NOT EXISTS new_table (\n";
+    $content .= "--     id INT AUTO_INCREMENT PRIMARY KEY,\n";
+    $content .= "--     name VARCHAR(255) NOT NULL\n";
+    $content .= "-- );\n";
+    
+    file_put_contents($filePath, $content);
+    
+    echo "✓ Migration created: {$fileName}\n";
+    echo "  Location: database/migrations/{$fileName}\n";
+}
+
+/**
+ * Run migrations
+ */
+function runMigrations() {
+    echo "Running migrations...\n\n";
+    
+    $migrationsDir = __DIR__ . '/database/migrations';
+    
+    if (!is_dir($migrationsDir)) {
+        echo "❌ Migrations directory not found.\n";
+        exit(1);
+    }
+    
+    $files = glob($migrationsDir . '/*.sql');
+    sort($files);
+    
+    if (empty($files)) {
+        echo "No migrations to run.\n";
+        exit(0);
+    }
+    
+    try {
+        $db = db();
+        $executed = 0;
+        
+        foreach ($files as $file) {
+            $sql = file_get_contents($file);
+            
+            // Remove comments
+            $sql = preg_replace('/--.*$/m', '', $sql);
+            $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
+            
+            if (trim($sql)) {
+                $db->getPdo()->exec($sql);
+                echo "  ✓ Executed: " . basename($file) . "\n";
+                $executed++;
+            }
+        }
+        
+        echo "\n✓ Migrations completed! ({$executed} migrations executed)\n";
+    } catch (Exception $e) {
+        echo "❌ Error: " . $e->getMessage() . "\n";
+        exit(1);
+    }
+}
+
+/**
+ * Seed database
+ */
+function seedDatabase($args) {
+    echo "Seeding database...\n";
+    echo "⚠️  Database seeding not yet implemented.\n";
+    echo "You can add seed files in database/seeds/ directory.\n";
+}
+
+/**
+ * Start development server
+ */
+function startServer($args) {
+    $port = isset($args[0]) ? (int)$args[0] : 8000;
+    
+    echo "Starting development server on http://localhost:{$port}\n";
+    echo "Press Ctrl+C to stop the server.\n\n";
+    
+    $command = "php -S localhost:{$port} -t " . __DIR__;
+    passthru($command);
+}
+
+/**
+ * Switch database environment
+ */
+function switchEnvironment($env) {
+    $envFile = __DIR__ . '/.database-env';
+    $allowedEnvs = ['local', 'live'];
+    
+    if (!in_array($env, $allowedEnvs)) {
+        echo "❌ Error: Invalid environment. Use 'local' or 'live'.\n";
+        exit(1);
+    }
+    
+    // Check if config file exists
+    $configFile = __DIR__ . "/config/database.{$env}.php";
+    if (!file_exists($configFile)) {
+        if ($env === 'live') {
+            echo "❌ Error: Live database config not found.\n";
+            echo "Please copy config/database.live.php.example to config/database.live.php\n";
+            echo "and update it with your live server credentials.\n";
+        } else {
+            echo "❌ Error: Local database config not found.\n";
+        }
+        exit(1);
+    }
+    
+    // Save environment
+    file_put_contents($envFile, $env);
+    
+    // Test connection
+    try {
+        // Clear any cached connection
+        $reflection = new ReflectionClass(\App\Database\Connection::class);
+        $instanceProperty = $reflection->getProperty('instance');
+        $instanceProperty->setAccessible(true);
+        $instanceProperty->setValue(null);
+        
+        $db = db();
+        $dbInfo = $db->fetchOne("SELECT DATABASE() as db_name");
+        $dbName = $dbInfo['db_name'] ?? 'Unknown';
+        
+        echo "✓ Switched to {$env} environment\n";
+        echo "✓ Connected to database: {$dbName}\n";
+        echo "\nAll artisan commands will now use the {$env} database.\n";
+    } catch (Exception $e) {
+        echo "⚠️  Environment switched to {$env}, but connection test failed:\n";
+        echo "   " . $e->getMessage() . "\n";
+        echo "\nPlease check your database credentials in config/database.{$env}.php\n";
+    }
+}
+
+/**
+ * Show current environment
+ */
+function showCurrentEnvironment() {
+    $envFile = __DIR__ . '/.database-env';
+    $environment = 'local'; // default
+    
+    if (file_exists($envFile)) {
+        $environment = trim(file_get_contents($envFile));
+    }
+    
+    echo "\nCurrent Database Environment: {$environment}\n\n";
+    
+    // Show current database connection info
+    try {
+        $db = db();
+        $dbInfo = $db->fetchOne("SELECT DATABASE() as db_name, USER() as db_user");
+        $dbName = $dbInfo['db_name'] ?? 'Unknown';
+        $dbUser = $dbInfo['db_user'] ?? 'Unknown';
+        
+        echo "Connected Database: {$dbName}\n";
+        echo "Database User: {$dbUser}\n";
+    } catch (Exception $e) {
+        echo "❌ Could not connect to database: " . $e->getMessage() . "\n";
+    }
+    
+    echo "\nTo switch environments:\n";
+    echo "  php artisan env:local  (switch to local)\n";
+    echo "  php artisan env:live   (switch to live)\n\n";
+}
+
+/**
+ * Pull all files from cPanel to local
+ */
+function pullFromRemote($args) {
+    $options = [
+        'backup_local' => true,
+        'dry_run' => false,
+        'preserve_config' => true,
+    ];
+    
+    // Parse arguments
+    foreach ($args as $arg) {
+        if ($arg === '--no-backup') {
+            $options['backup_local'] = false;
+        } elseif ($arg === '--dry-run' || strpos($arg, 'pull:dry-run') !== false) {
+            $options['dry_run'] = true;
+        } elseif ($arg === '--overwrite-config') {
+            $options['preserve_config'] = false;
+        }
+    }
+    
+    echo "\n";
+    echo "╔══════════════════════════════════════════════════════════════╗\n";
+    echo "║           Pull Files from cPanel to Local                   ║\n";
+    echo "╚══════════════════════════════════════════════════════════════╝\n\n";
+    
+    if ($options['dry_run']) {
+        echo "⚠️  DRY RUN MODE - No files will be downloaded\n\n";
+    }
+    
+    try {
+        $syncService = new \App\Services\FileSyncService();
+        $result = $syncService->pullFromRemote($options);
+        
+        if ($result['success']) {
+            echo "\n";
+            echo "✓ " . $result['message'] . "\n";
+            
+            if (isset($result['stats'])) {
+                echo "\nStatistics:\n";
+                echo "  Files downloaded: " . $result['stats']['files'] . "\n";
+                echo "  Directories created: " . $result['stats']['dirs'] . "\n";
+                echo "  Files skipped: " . $result['stats']['skipped'] . "\n";
+            }
+        } else {
+            echo "\n";
+            echo "❌ " . $result['message'] . "\n";
+            exit(1);
+        }
+        
+    } catch (Exception $e) {
+        echo "\n";
+        echo "❌ Error: " . $e->getMessage() . "\n";
+        echo "\nMake sure you have:\n";
+        echo "  1. Created deploy-config.json from deploy-config.example.json\n";
+        echo "  2. Updated FTP credentials in deploy-config.json\n";
+        exit(1);
+    }
+}

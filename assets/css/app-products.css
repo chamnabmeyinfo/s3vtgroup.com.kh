@@ -1,0 +1,908 @@
+/* ============================================
+   MOBILE APP STYLE PRODUCTS PAGE
+   Modern, App-Like Design
+   ============================================ */
+
+/* App Main Container */
+.app-products-main {
+    background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+    min-height: 100vh;
+    padding: 1rem 0;
+}
+
+@media (max-width: 640px) {
+    .app-products-main {
+        padding: 0.75rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        position: relative;
+    }
+    
+    /* Windows 11 Glass Background Pattern */
+    .app-products-main::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 20%, rgba(102, 126, 234, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .products-page-container {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+/* ============================================
+   APP PRODUCTS HEADER
+   ============================================ */
+.app-products-header {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #f1f5f9;
+}
+
+/* Windows 11 Glass Header - Mobile */
+@media (max-width: 640px) {
+    .app-products-header {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.37),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+        border-radius: 1.25rem;
+    }
+}
+
+.app-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.app-header-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.app-page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.app-search-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    width: fit-content;
+}
+
+/* Windows 11 Glass Search Badge - Mobile */
+@media (max-width: 640px) {
+    .app-search-badge {
+        background: rgba(239, 246, 255, 0.7);
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(191, 219, 254, 0.4);
+        box-shadow: 0 2px 8px 0 rgba(37, 99, 235, 0.2);
+    }
+}
+
+.app-results-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.app-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.app-sort-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8fafc;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+}
+
+/* Windows 11 Glass Sort Container - Mobile */
+@media (max-width: 640px) {
+    .app-sort-container {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+    }
+}
+
+.app-sort-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.app-sort-select {
+    background: transparent;
+    border: none;
+    color: #1e293b;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: background 0.2s;
+}
+
+.app-sort-select:hover {
+    background: #e2e8f0;
+}
+
+.app-layout-switcher {
+    display: flex;
+    background: #f8fafc;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    gap: 0.25rem;
+}
+
+/* Windows 11 Glass Layout Switcher - Mobile */
+@media (max-width: 640px) {
+    .app-layout-switcher {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+    }
+}
+
+.app-layout-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.app-layout-btn:hover {
+    background: #e2e8f0;
+    color: #2563eb;
+}
+
+.app-layout-btn.active {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+/* ============================================
+   APP PRODUCT CARDS
+   ============================================ */
+.app-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.app-product-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #f1f5f9;
+    position: relative;
+}
+
+.app-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.06);
+    border-color: #e2e8f0;
+}
+
+.app-product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Product Image */
+.app-product-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 4:4 (Square) */
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.app-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-product-card:hover .app-product-image {
+    transform: scale(1.05);
+}
+
+.app-product-placeholder,
+.app-image-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 3rem;
+}
+
+/* Featured Badge - Icon Only at Top Left Corner */
+.app-featured-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.app-featured-badge:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(251, 191, 36, 0.5), 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.app-featured-badge i {
+    font-size: 1rem;
+    color: white;
+}
+
+.app-featured-badge span {
+    display: none; /* Hide text, show only icon */
+}
+
+/* Product Overlay Actions */
+.app-product-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.app-product-card:hover .app-product-overlay {
+    opacity: 1;
+}
+
+.app-overlay-btn {
+    width: auto;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 22px;
+    border: none;
+    background: white;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.app-overlay-btn .feature-btn-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .app-overlay-btn .feature-btn-text {
+        display: inline;
+    }
+    
+    .app-overlay-btn {
+        padding: 0 14px;
+    }
+}
+
+.app-overlay-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-overlay-btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.app-overlay-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.app-overlay-btn-wishlist {
+    background: white;
+    color: #ef4444;
+}
+
+.app-overlay-btn-wishlist:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.app-overlay-btn-wishlist.bg-red-500 {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.app-overlay-btn-compare {
+    background: white;
+    color: #3b82f6;
+}
+
+.app-overlay-btn-compare:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.app-overlay-btn-compare.bg-blue-500 {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+.app-overlay-btn-feature {
+    background: white;
+    color: #fbbf24;
+}
+
+.app-overlay-btn-feature:hover {
+    background: #fbbf24;
+    color: white;
+    transform: scale(1.1);
+}
+
+.app-overlay-btn-feature.active {
+    background: #fbbf24 !important;
+    color: white !important;
+}
+
+.app-overlay-btn-feature.active:hover {
+    background: #dc2626 !important;
+    color: white !important;
+}
+
+.app-overlay-btn-feature.active .feature-btn-text {
+    color: white;
+}
+
+.app-overlay-btn-feature:not(.active) .feature-btn-text {
+    color: #fbbf24;
+}
+
+.app-overlay-btn-order {
+    background: white;
+    color: #8b5cf6;
+}
+
+.app-overlay-btn-order:hover {
+    background: #8b5cf6;
+    color: white;
+    transform: scale(1.1);
+}
+
+.app-featured-order-input {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 50px;
+    height: 32px;
+    background: rgba(251, 191, 36, 0.95);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border: 2px solid rgba(245, 158, 11, 0.5);
+}
+
+.app-featured-order-input .featured-order-input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #1f2937;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    -moz-appearance: textfield;
+}
+
+.app-featured-order-input .featured-order-input::-webkit-outer-spin-button,
+.app-featured-order-input .featured-order-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.app-featured-order-input .featured-order-input:focus {
+    outline: 2px solid #f59e0b;
+    outline-offset: -2px;
+    background: white;
+}
+
+.app-overlay-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+/* Product Info */
+.app-product-info {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.app-product-category {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.app-product-category i {
+    font-size: 0.625rem;
+    color: #2563eb;
+}
+
+.app-product-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 3.15rem;
+}
+
+.app-product-description {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.625rem;
+}
+
+/* Price Section */
+.app-product-price-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.app-price-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.app-price-current {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #2563eb;
+    line-height: 1;
+}
+
+.app-price-original {
+    font-size: 1rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.app-price-request {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.app-discount-badge {
+    background: #ef4444;
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Product Button */
+.app-product-btn {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.app-product-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.app-product-btn:active {
+    transform: translateY(0);
+}
+
+/* Windows 11 Glass Product Button - Mobile */
+@media (max-width: 640px) {
+    .app-product-btn {
+        background: rgba(37, 99, 235, 0.85);
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        box-shadow: 
+            0 4px 16px 0 rgba(37, 99, 235, 0.3),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .app-product-btn:hover {
+        background: rgba(29, 78, 216, 0.9);
+        box-shadow: 
+            0 6px 20px 0 rgba(37, 99, 235, 0.4),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+.app-product-btn i {
+    transition: transform 0.2s ease;
+}
+
+.app-product-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* Empty State */
+.app-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Windows 11 Glass Empty State - Mobile */
+@media (max-width: 640px) {
+    .app-empty-state {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.25),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+        border-radius: 1.5rem;
+    }
+}
+
+.app-empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 2.5rem;
+}
+
+.app-empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.5rem;
+}
+
+.app-empty-text {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0 0 1.5rem;
+}
+
+.app-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    background: #2563eb;
+    color: white;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.app-btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Windows 11 Glass Primary Button - Mobile */
+@media (max-width: 640px) {
+    .app-btn-primary {
+        background: rgba(37, 99, 235, 0.85);
+        backdrop-filter: blur(12px) saturate(180%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%);
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        box-shadow: 
+            0 4px 16px 0 rgba(37, 99, 235, 0.3),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .app-btn-primary:hover {
+        background: rgba(29, 78, 216, 0.9);
+        box-shadow: 
+            0 6px 20px 0 rgba(37, 99, 235, 0.4),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE APP STYLE
+   ============================================ */
+@media (max-width: 640px) {
+    .app-products-header {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .app-page-title {
+        font-size: 1.5rem;
+    }
+
+    .app-header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .app-sort-container {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .app-sort-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .app-products-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .app-product-card {
+        border-radius: 0.875rem;
+    }
+
+    .app-product-info {
+        padding: 1rem;
+    }
+
+    .app-product-title {
+        font-size: 1rem;
+        min-height: 2.8rem;
+    }
+
+    .app-price-current {
+        font-size: 1.25rem;
+    }
+
+    .app-product-btn {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   RESPONSIVE - TABLET
+   ============================================ */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .app-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    .app-header-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* ============================================
+   RESPONSIVE - DESKTOP
+   ============================================ */
+@media (min-width: 1025px) {
+    .app-products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .app-header-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* ============================================
+   LIST VIEW - APP STYLE
+   ============================================ */
+.app-products-grid.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.app-products-grid.list-view .app-product-card {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+}
+
+.app-products-grid.list-view .app-product-image-wrapper {
+    width: 200px;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1; /* 4:4 (Square) */
+}
+
+.app-products-grid.list-view .app-product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.app-products-grid.list-view .app-product-price-section {
+    border-top: none;
+    border-bottom: none;
+    padding: 0;
+    margin-top: auto;
+}
+
+.app-products-grid.list-view .app-product-btn {
+    width: auto;
+    min-width: 150px;
+    margin-top: 0;
+}
+
+/* ============================================
+   COMPACT VIEW - APP STYLE
+   ============================================ */
+.app-products-grid.compact-view {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.app-products-grid.compact-view .app-product-info {
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+.app-products-grid.compact-view .app-product-title {
+    font-size: 0.9375rem;
+    min-height: 2.625rem;
+}
+
+.app-products-grid.compact-view .app-product-description {
+    display: none;
+}
+
+.app-products-grid.compact-view .app-price-current {
+    font-size: 1.125rem;
+}
+
+.app-products-grid.compact-view .app-product-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+}
+

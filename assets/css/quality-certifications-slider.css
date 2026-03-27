@@ -1,0 +1,157 @@
+/* Quality Certifications Logo Slider */
+
+.quality-certifications-slider {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    padding: 60px 0;
+    overflow: hidden;
+    border-top: 1px solid #e5e7eb;
+}
+
+.quality-certifications-slider-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.quality-certifications-slider-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.quality-certifications-slider-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+.quality-certifications-slider-header p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.quality-certifications-slider-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.quality-certifications-slider-track {
+    display: flex;
+    gap: 30px;
+    animation: slideCertifications 25s linear infinite;
+    will-change: transform;
+}
+
+/* Hide cloned items visually (they're for animation only) */
+.quality-certifications-slider-item[aria-hidden="true"],
+.quality-certifications-slider-item.slider-clone {
+    /* Keep in DOM for animation but ensure they don't appear as duplicates */
+    /* The animation will handle the seamless loop */
+}
+
+.quality-certifications-slider-track:hover {
+    animation-play-state: paused;
+}
+
+.quality-certifications-slider-item {
+    flex-shrink: 0;
+    width: 160px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.quality-certifications-slider-item:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-color: #3b82f6;
+}
+
+.quality-certifications-slider-item a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    position: relative;
+}
+
+.quality-certifications-slider-item img {
+    max-width: 100%;
+    max-height: 80px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.quality-certifications-slider-item:hover img {
+    transform: scale(1.1);
+}
+
+.quality-certifications-slider-item .cert-name {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: center;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.quality-certifications-slider-item:hover .cert-name {
+    color: #3b82f6;
+}
+
+/* Animation */
+@keyframes slideCertifications {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .quality-certifications-slider {
+        padding: 40px 0;
+    }
+
+    .quality-certifications-slider-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .quality-certifications-slider-item {
+        width: 140px;
+        height: 100px;
+        padding: 15px;
+    }
+
+    .quality-certifications-slider-track {
+        gap: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quality-certifications-slider-item {
+        width: 120px;
+        height: 90px;
+        padding: 12px;
+    }
+
+    .quality-certifications-slider-track {
+        gap: 20px;
+    }
+
+    .quality-certifications-slider-item .cert-name {
+        font-size: 0.65rem;
+    }
+}

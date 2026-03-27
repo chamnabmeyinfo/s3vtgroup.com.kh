@@ -1,0 +1,121 @@
+/* Product Image Styles - Enhanced Display */
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+}
+
+.product-card img {
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Image placeholder fallback */
+.product-image-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Image loading state */
+.product-image {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-image.loaded {
+    opacity: 1;
+}
+
+/* Product gallery thumbnail */
+.gallery-thumbnail {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.gallery-thumbnail:hover,
+.gallery-thumbnail.active {
+    border-color: #3b82f6;
+    transform: scale(1.1);
+}
+
+/* Product zoom on hover */
+.product-zoom-image {
+    transition: transform 0.3s ease;
+}
+
+.product-zoom-image:hover {
+    transform: scale(1.1);
+}
+
+/* Lazy loading placeholder */
+.lazy-image {
+    background: #f3f4f6;
+    min-height: 200px;
+}
+
+/* Image aspect ratio maintainer */
+.image-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 75%; /* 4:3 aspect ratio */
+    overflow: hidden;
+}
+
+.image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Broken image fallback */
+img[src=""],
+img:not([src]) {
+    display: none;
+}
+
+img[src=""] + .image-fallback,
+img:not([src]) + .image-fallback {
+    display: flex;
+}
+
+.image-fallback {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+    min-height: 200px;
+}
+

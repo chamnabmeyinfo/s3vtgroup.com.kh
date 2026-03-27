@@ -1,0 +1,70 @@
+{
+    "name": "s3vgroup/forklift-ecommerce",
+    "description": "Forklift & Equipment E-Commerce Website",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "doctrine/dbal": "^3.6",
+        "symfony/console": "^6.0",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Support/functions.php"
+        ]
+    },
+    "scripts": {
+        "db:query": [
+            "php artisan db:query"
+        ],
+        "db:live": [
+            "php artisan env:live"
+        ],
+        "db:local": [
+            "php artisan env:local"
+        ],
+        "db:backup": [
+            "php artisan db:backup"
+        ],
+        "db:optimize": [
+            "php artisan db:optimize"
+        ],
+        "db:schema": [
+            "php scripts/db-manage.php schema"
+        ],
+        "db:tables": [
+            "php scripts/db-manage.php tables"
+        ],
+        "db:export": [
+            "php scripts/db-manage.php export"
+        ],
+        "cache:clear": [
+            "php artisan cache:clear"
+        ],
+        "migrate": [
+            "php artisan migrate"
+        ],
+        "serve": [
+            "php artisan serve"
+        ],
+        "pull": [
+            "php artisan pull"
+        ],
+        "pull:dry-run": [
+            "php artisan pull:dry-run"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

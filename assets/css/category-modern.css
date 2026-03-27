@@ -1,0 +1,69 @@
+/* ============================================
+   MODERN CATEGORY CARDS
+   With Images/Icons and Descriptions
+   ============================================ */
+
+.category-modern {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Image Wrapper */
+.category-image-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 192px;
+    overflow: hidden;
+}
+
+.category-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-modern:hover .category-image-wrapper img {
+    transform: scale(1.1);
+}
+
+/* Icon Fallback */
+.category-icon-fallback {
+    display: none;
+}
+
+/* Content Section */
+.category-modern .p-6 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .category-image-wrapper {
+        min-height: 160px;
+    }
+    
+    .category-modern .p-6 {
+        padding: 1rem;
+    }
+    
+    .category-modern h3 {
+        font-size: 1.125rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .category-modern p {
+        font-size: 0.8125rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .category-image-wrapper {
+        min-height: 180px;
+    }
+}
+
