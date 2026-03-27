@@ -17,14 +17,21 @@ class GoogleMerchantProductSync
     /** @var array<string,mixed> */
     private $cfg;
 
-    public function __construct()
+    /**
+     * @param array<string,mixed>|null $configOverride If set (e.g. CLI diagnostics), skip global config()
+     */
+    public function __construct(?array $configOverride = null)
     {
-        $this->cfg = config('google_merchant', []) ?: [];
+        $this->cfg = $configOverride !== null
+            ? $configOverride
+            : (config('google_merchant', []) ?: []);
     }
 
-    public static function isEnabled(): bool
+    /**
+     * @param array<string,mixed> $cfg
+     */
+    public static function isConfigEnabled(array $cfg): bool
     {
-        $cfg = config('google_merchant', []) ?: [];
         if (empty($cfg['enabled'])) {
             return false;
         }
@@ -34,6 +41,11 @@ class GoogleMerchantProductSync
             return false;
         }
         return true;
+    }
+
+    public static function isEnabled(): bool
+    {
+        return self::isConfigEnabled(config('google_merchant', []) ?: []);
     }
 
     private function getAccessToken(): string
