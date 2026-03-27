@@ -46,10 +46,8 @@ if (!is_file($vendorAutoload)) {
 }
 require_once $vendorAutoload;
 
-if (is_file($projectRoot . '/.env') && class_exists(\Dotenv\Dotenv::class)) {
-    \Dotenv\Dotenv::createImmutable($projectRoot)->safeLoad();
-}
-
+// Intentionally skip vlucas/phpdotenv here: it throws on any invalid .env line (e.g. stray text
+// without KEY=value). config/google_merchant.php reads .env with tolerant parsing instead.
 $cfg = require $projectRoot . '/config/google_merchant.php';
 if (!is_array($cfg)) {
     fwrite(STDERR, "Invalid config/google_merchant.php\n");
