@@ -14,12 +14,27 @@ if (!App\Services\GoogleMerchantProductSync::isEnabled()) {
     exit(1);
 }
 
+if (!class_exists(\Google\Auth\Credentials\ServiceAccountCredentials::class)) {
+    fwrite(STDERR, "Missing Composer package google/auth. From the project root run: composer install\n");
+    exit(1);
+}
+
 $cfg = config('google_merchant', []) ?: [];
+echo "PHP " . PHP_VERSION . "\n";
 echo "Merchant ID in config: " . ($cfg['merchant_id'] ?? '') . "\n";
 echo "Credentials: " . ($cfg['credentials_path'] ?? '') . " (readable: " . (is_readable($cfg['credentials_path'] ?? '') ? 'yes' : 'no') . ")\n\n";
 
 $sync = new App\Services\GoogleMerchantProductSync();
-$result = $sync->listProductsFromApi(250);
+try {
+    $result = $sync->listProductsFromApi(250);
+} catch (\Throwable $e) {
+    fwrite(STDERR, "Diagnostics failed before HTTP response: " . $e::class . ': ' . $e->getMessage() . "\n");
+    fwrite(STDERR, "Common causes: run `composer install` on this server; check outbound HTTPS to googleapis.com; verify the service account JSON is valid.\n");
+    if ($e->getPrevious() !== null) {
+        fwrite(STDERR, "Caused by: " . $e->getPrevious()::class . ': ' . $e->getPrevious()->getMessage() . "\n");
+    }
+    exit(3);
+}
 
 echo "HTTP code: " . $result['http_code'] . "\n";
 echo "Products returned by API: " . $result['count'] . "\n";
