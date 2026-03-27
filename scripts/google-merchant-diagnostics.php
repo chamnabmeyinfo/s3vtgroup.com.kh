@@ -96,6 +96,15 @@ if ($result['error_body'] !== '') {
     echo substr($result['error_body'], 0, 2000) . "\n";
 }
 
+if ($result['http_code'] === 401 && str_contains($result['error_body'], 'account_access_denied')) {
+    echo "\n--- Fix (401 account_access_denied) ---\n";
+    echo "The service account in your JSON key is not allowed to use Merchant ID " . ($cfg['merchant_id'] ?? '') . ".\n";
+    echo "1) Open the credentials JSON and copy \"client_email\" (…@….iam.gserviceaccount.com).\n";
+    echo "2) Merchant Center → gear → Account settings → Users (or People and access): invite that email with Admin or Standard.\n";
+    echo "3) Merchant Center → Tools → Content API (or Business settings → Google Cloud): link the same Cloud project that owns this service account.\n";
+    echo "4) If this ID is a multi-client parent, use the child merchant ID in GOOGLE_MERCHANT_MERCHANT_ID and grant access there too.\n";
+}
+
 if (!empty($result['product_ids'])) {
     echo "\nSample product IDs (up to 20):\n";
     foreach ($result['product_ids'] as $id) {
