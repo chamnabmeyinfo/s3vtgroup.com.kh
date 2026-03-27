@@ -14,8 +14,16 @@ if (!App\Services\GoogleMerchantProductSync::isEnabled()) {
     exit(1);
 }
 
+$projectRoot = dirname(__DIR__);
+$vendorAutoload = $projectRoot . '/vendor/autoload.php';
+if (!is_file($vendorAutoload)) {
+    fwrite(STDERR, "Composer dependencies are missing (no vendor/autoload.php).\n");
+    fwrite(STDERR, "From {$projectRoot} run: composer install\n");
+    exit(1);
+}
 if (!class_exists(\Google\Auth\Credentials\ServiceAccountCredentials::class)) {
-    fwrite(STDERR, "Missing Composer package google/auth. From the project root run: composer install\n");
+    fwrite(STDERR, "Package google/auth is missing or incomplete under vendor/.\n");
+    fwrite(STDERR, "From {$projectRoot} run: composer install\n");
     exit(1);
 }
 
