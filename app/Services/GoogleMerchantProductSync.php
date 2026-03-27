@@ -356,5 +356,45 @@ class GoogleMerchantProductSync
         $msg = is_string($resp) ? $resp : '';
         throw new Exception('Google Merchant API HTTP ' . $code . ': ' . $msg);
     }
+
+    /**
+     * GET products.list — use to verify products exist for this merchantId (ground truth vs MC UI).
+     * Per Google: merchantId must NOT be a multi-client account parent; use a sub-account ID if applicable.
+     *
+     * @return array{http_code:int, count:int, product_ids: string[], error_body: string, raw: ?array}
+     */
+    public function listProductsFromApi(int $maxResults = 250): array
+    {
+        $merchantId = $this->cfg['merchant_id'];
+        $url = self::API_BASE . '/' . rawurlencode($merchantId) . '/products?maxResults=' . min(250, max(1, $maxResults));
+        $token = $this->getAccessToken();
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json',
+        ]);
+        $resp = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $bodyStr = is_string($resp) ? $resp : '';
+        $raw = json_decode($bodyStr, true);
+        $resources = is_array($raw) && isset($raw['resources']) && is_array($raw['resources']) ? $raw['resources'] : [];
+        $ids = [];
+        foreach ($resources as $p) {
+            if (is_array($p) && !empty($p['id'])) {
+                $ids[] = (string) $p['id'];
+            }
+        }
+
+        return [
+            'http_code' => $code,
+            'count' => count($resources),
+            'product_ids' => array_slice($ids, 0, 20),
+            'error_body' => $code >= 200 && $code < 300 ? '' : $bodyStr,
+            'raw' => is_array($raw) ? $raw : null,
+        ];
+    }
 }
 

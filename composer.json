@@ -62,6 +62,9 @@
         ],
         "merchant:resync": [
             "php scripts/google-merchant-resync.php"
+        ],
+        "merchant:diagnostics": [
+            "php scripts/google-merchant-diagnostics.php"
         ]
     },
     "config": {
