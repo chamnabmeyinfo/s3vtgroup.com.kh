@@ -16,7 +16,39 @@
  * GOOGLE_MERCHANT_FEED_ENABLED, GOOGLE_MERCHANT_FEED_TOKEN
  *
  * Reads $_ENV / $_SERVER first (vlucas/phpdotenv createImmutable), then getenv().
+ *
+ * Fallback: if Composer Dotenv did not run, merge simple KEY=VALUE lines from /.env into $_ENV.
  */
+$projectRoot = dirname(__DIR__);
+$envFile = $projectRoot . '/.env';
+if (is_readable($envFile)) {
+    $lines = @file($envFile, FILE_IGNORE_NEW_LINES);
+    if (is_array($lines)) {
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || ($line[0] ?? '') === '#') {
+                continue;
+            }
+            if (!str_contains($line, '=')) {
+                continue;
+            }
+            [$name, $value] = array_map('trim', explode('=', $line, 2));
+            if ($name === '') {
+                continue;
+            }
+            if (strlen($value) >= 2) {
+                $q = $value[0];
+                if (($q === '"' || $q === "'") && substr($value, -1) === $q) {
+                    $value = substr($value, 1, -1);
+                }
+            }
+            if (!array_key_exists($name, $_ENV)) {
+                $_ENV[$name] = $value;
+            }
+        }
+    }
+}
+
 $env = static function (string $key, string $default = ''): string {
     if (array_key_exists($key, $_ENV)) {
         return (string) $_ENV[$key];
@@ -29,7 +61,6 @@ $env = static function (string $key, string $default = ''): string {
     return $v !== false ? (string) $v : $default;
 };
 
-$projectRoot = dirname(__DIR__);
 $envCred = $env('GOOGLE_MERCHANT_CREDENTIALS_PATH', '');
 if ($envCred === '') {
     $credentialsPath = $projectRoot . '/storage/private/google-merchant-credentials.json';
